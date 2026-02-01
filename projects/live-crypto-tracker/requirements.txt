@@ -1,0 +1,13 @@
+# HTTP Requests
+requests>=2.31.0
+
+# Custom Package (required)
+# haashi_pkg: Custom utility toolkit for data handling and utilities
+# Repository: https://github.com/Haashiraaa/my-packages
+# Install with: pip install git+https://github.com/Haashiraaa/my-packages.git
+#
+# This package provides:
+# - Utility: JSON file handling, datetime utilities, logging
+# - Used for credential storage and debugging
+
+# Note: Python 3.x required (tested on Python 3.14)
