@@ -22,6 +22,14 @@ def load_storage(credentials_path: Path) -> dict[str, str]:
         sys.exit(1)
 
 
+def fetch_and_format_prices(req: RequestData, curr_code: str) -> str:
+    """Fetch live prices and format for Telegram"""
+    data = make_request(req)
+    messages = get_live_rates(data, curr_code)
+    output = "📊Live Crypto Rates\n\n" + "\n\n".join(messages)
+    return output
+
+
 def bootstrap() -> None:
 
     ENDPOINTS: str = "/v1/cryptocurrency/quotes/latest"
@@ -47,23 +55,21 @@ def bootstrap() -> None:
         currency_code=CURR_CODE
     )
 
-    data = make_request(req)
-    messages = get_live_rates(data, CURR_CODE)
-    output = "📊Live Crypto Rates\n\n" + "\n\n".join(messages)
-
-    Utility(logging.INFO).debug(output)
-
-    # Recieve Notification from Telegram
-
+    # Receive Notification from Telegram
     if AUTO_UPDATE:
         print("\n\nServer is running in background mode.")
         print("Press Ctrl+C to stop.")
         while True:
-            TelegramClient(TOKEN=BOT_TK, CHAT_ID=CHAT_ID).send(
-                message=output)
+            # Fetch FRESH data each time
+            output = fetch_and_format_prices(req, CURR_CODE)
+            Utility(logging.INFO).debug(output)
+            TelegramClient(TOKEN=BOT_TK, CHAT_ID=CHAT_ID).send(message=output)
             time.sleep(300)
-
-    TelegramClient(TOKEN=BOT_TK, CHAT_ID=CHAT_ID).send(message=output)
+    else:
+        # Single run
+        output = fetch_and_format_prices(req, CURR_CODE)
+        Utility(logging.INFO).debug(output)
+        TelegramClient(TOKEN=BOT_TK, CHAT_ID=CHAT_ID).send(message=output)
 
 
 if __name__ == "__main__":
