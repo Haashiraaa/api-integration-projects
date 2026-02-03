@@ -58,7 +58,9 @@ def get_live_rates(data: dict[str, Any], curr_code: str) -> list[str]:
     return messages
 
 
-def make_request(req: RequestData, max_retries: int = 3) -> dict[str, Any]:
+def make_request(
+    req: RequestData, max_retries: int = 3, retry_delay: float = 5
+) -> dict[str, Any]:
 
     failed_requests = 0
 
@@ -94,7 +96,7 @@ def make_request(req: RequestData, max_retries: int = 3) -> dict[str, Any]:
             Utility(logging.INFO).debug(e)
             print("Retrying request...")
             failed_requests += 1
-            time.sleep(failed_requests)
+            time.sleep(retry_delay)
 
     print("\n\nRequest Failed!")
     sys.exit(1)
