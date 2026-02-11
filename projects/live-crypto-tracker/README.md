@@ -112,6 +112,7 @@ pip install -r requirements.txt
 Run the script for the first time:
 
 ```bash
+cd bot/
 python bootstrap.py
 ```
 
